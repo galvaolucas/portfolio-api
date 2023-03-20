@@ -10,17 +10,14 @@ interface IUser {
 export class MailService {
   constructor(private mailerService: MailerService) {}
 
-  async sendUserConfirmation(user: IUser, token: string) {
-    const url = `example.com/auth/confirm?token=${token}`;
-
+  async sendUserConfirmation(user: IUser) {
     await this.mailerService.sendMail({
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
-      subject: 'Welcome to Nice App! Confirm your Email',
-      template: './confirmation', // `.hbs` extension is appended automatically
+      subject: 'Contato - Lucas Galvão',
+      template: './email', // `.hbs` extension is appended automatically
       context: {
         name: user.name,
-        url,
       },
     });
   }

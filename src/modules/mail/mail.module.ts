@@ -9,22 +9,22 @@ import { MailService } from './mail.service';
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.gmail.com',
+        host: process.env.EMAIL_HOST,
         secure: false,
         auth: {
-          user: 'lucasmelogalv@gmail.com',
-          pass: '@Lucas020296',
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD_APP,
         },
       },
       defaults: {
         from: 'No Reply <noreply@example.com>',
       },
       template: {
-        dir: join(__dirname, 'templates'),
+        dir: join(__dirname, '../../templates'),
         adapter: new HandlebarsAdapter(),
-      },
-      options: {
-        strict: true,
+        options: {
+          strict: true,
+        },
       },
     }),
   ],
