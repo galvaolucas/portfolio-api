@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
+import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
+import { IAuthUser } from './types';
 
 @Injectable()
 export class AuthService {
@@ -9,17 +10,21 @@ export class AuthService {
     userService: UserService;
   }
 
-  async signIn(username: string, password: string): Promise<string> {
-    const user = await this.userService.findOne({ username });
-    const decodedPassword = await bcrypt.compare(user?.password, password);
+  async signIn(email: string, password: string): Promise<IAuthUser> {
+    const user = await this.userService.findOne({ email });
+    if (!user) {
+      throw new NotFoundException('Email não encontrado.');
+    }
+    const decodedPassword = await bcrypt.compare(password, user?.password);
     if (!decodedPassword) {
       throw new UnauthorizedException();
     }
+    delete user.password
     const token = jwt.sign(
       { user },
       process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '',
       { expiresIn: '24h', algorithm: 'RS256' },
     );
-    return token;
+    return { email: user.email, username: user.username, token };
   }
 }

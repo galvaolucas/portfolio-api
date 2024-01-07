@@ -1,5 +1,5 @@
 import { MailService } from './../mail/mail.service';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -16,18 +16,22 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     try {
+      const user = await this.userModel.findOne({ email: createUserDto.email });
+      if (user) {
+        throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+      }
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(
         createUserDto.password,
         saltRounds,
       );
-      const user = {
+      const newUser = {
         ...createUserDto,
         password: hashedPassword,
       };
-      const createdUser = new this.userModel(user);
+      const createdUser = new this.userModel(newUser);
       // await this.mailService.sendUserConfirmation(createdUser);
-      return createdUser.save();
+      return await createdUser.save();
     } catch (err) {
       throw new Error(err);
     }
@@ -38,7 +42,7 @@ export class UserService {
   }
 
   async findOne(params: Record<string, any>) {
-    const user = await this.userModel.findOne({ params });
+    const user = await this.userModel.findOne(params);
     return user;
   }
 
