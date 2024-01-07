@@ -5,11 +5,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MailModule } from './modules/mail/mail.module';
 import { UserModule } from './modules/user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
     MailModule,
     UserModule,
+    AuthModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGOOSE_URL),
   ],

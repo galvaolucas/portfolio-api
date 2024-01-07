@@ -1,0 +1,61 @@
+version: '3.4'
+
+services:
+  api:
+    build:
+      context: .
+      target: development
+    environment:
+      APP_WEB_URL: ${APP_WEB_URL}
+      PORT: ${PORT}
+      DB_TYPE: ${DB_TYPE}
+      DB_HOST: ${DB_HOST}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_NAME: ${DB_NAME}
+      DB_SRC_BASE: ${DB_SRC_BASE}
+      DB_ENV: ${DB_ENV}
+      DB_PORT: ${DB_PORT}
+    volumes:
+      - ./:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - ${PORT}:${PORT}
+    depends_on: 
+      - mongo
+    networks:
+      - app-connect
+    command: >
+      sh -c "yarn && yarn dev"
+
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    networks:
+      - app-connect
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 8081:8081
+    depends_on:
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: lucas
+      ME_CONFIG_BASICAUTH_PASSWORD: development
+      ME_CONFIG_MONGODB_PORT: 27017
+    networks:
+      - app-connect
+
+networks:
+  app-connect:
+    driver: bridge
