@@ -25,6 +25,6 @@ export class AuthService {
       process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '',
       { expiresIn: '24h', algorithm: 'RS256' },
     );
-    return { email: user.email, username: user.username, token };
+    return { id: user._id, email: user.email, username: user.username, token };
   }
 }
