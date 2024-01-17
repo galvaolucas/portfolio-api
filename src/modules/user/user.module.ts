@@ -3,7 +3,7 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserController } from './user.controller';
 import { MailModule } from '../mail/mail.module';
-import { User, UserSchema } from './schemas/user.schema';
+import { User, UserSchema } from './schema/user.schema';
 
 @Module({
   imports: [

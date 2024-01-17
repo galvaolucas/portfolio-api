@@ -5,4 +5,7 @@ export interface IAuthUser {
   email: string;
   username: string;
   token: string;
+  role: IUserRole;
 }
+
+export type IUserRole = 'admin' | 'user';

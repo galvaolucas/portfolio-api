@@ -4,7 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User, UserDocument } from './schemas/user.schema';
+import { User, UserDocument } from './schema/user.schema';
 import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
@@ -42,12 +42,11 @@ export class UserService {
   }
 
   async findOne(params: Record<string, any>) {
-    const user = await this.userModel.findOne(params);
-    return user;
+    return await this.userModel.findOne(params);
   }
 
-  findById(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: string) {
+    return await this.userModel.findById(id);
   }
 
   update(id: number, updateUserDto: UpdateUserDto) {

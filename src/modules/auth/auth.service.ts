@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
-import { IAuthUser } from './types';
+import { IAuthUser } from 'src/global/types';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +25,6 @@ export class AuthService {
       process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '',
       { expiresIn: '24h', algorithm: 'RS256' },
     );
-    return { id: user._id, email: user.email, username: user.username, token };
+    return { id: user._id, email: user.email, username: user.username, token, role: user.role };
   }
 }

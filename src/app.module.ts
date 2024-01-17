@@ -6,14 +6,17 @@ import { AppService } from './app.service';
 import { MailModule } from './modules/mail/mail.module';
 import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
+import { ExperienceModule } from './modules/experience/experience.module';
+import { ExperienceService } from './modules/experience/experience.service';
 
 @Module({
   imports: [
     MailModule,
     UserModule,
     AuthModule,
+    ExperienceModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.MONGOOSE_URL),
+    MongooseModule.forRoot(process.env.MONGOOSE_URL)
   ],
   controllers: [AppController],
   providers: [AppService],
