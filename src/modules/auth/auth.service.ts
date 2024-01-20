@@ -1,16 +1,19 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
-import { IAuthUser } from 'src/global/types';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(private userService: UserService) {
+  constructor(
+    private userService: UserService,
+    private jwtService: JwtService
+    ) {
     userService: UserService;
+    jwtService: JwtService;
   }
 
-  async signIn(email: string, password: string): Promise<IAuthUser> {
+  async signIn(email: string, password: string): Promise<{access_token: string}> {
     const user = await this.userService.findOne({ email });
     if (!user) {
       throw new NotFoundException('Email não encontrado.');
@@ -19,12 +22,9 @@ export class AuthService {
     if (!decodedPassword) {
       throw new UnauthorizedException();
     }
-    delete user.password
-    const token = jwt.sign(
-      { user },
-      process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '',
-      { expiresIn: '24h', algorithm: 'RS256' },
-    );
-    return { id: user._id, email: user.email, username: user.username, token, role: user.role };
+    const payload = { sub: user.id, username: user.username, role: user.role, email: user.email }
+    return {
+      access_token: this.jwtService.sign(payload, { secret: process.env.JWT_PRIVATE_KEY, algorithm: 'RS256' }),
+    };
   }
 }
