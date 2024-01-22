@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Put } from '@nestjs/common';
 import { ExperienceService } from './experience.service';
 import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
@@ -9,35 +9,41 @@ export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) {}
 
   @UseGuards(AuthGuard)
-  @Post(':id')
+  @Post()
   create(
-    @Param('id') id: string,
     @Body() createExperienceDto: CreateExperienceDto) {
-    return this.experienceService.create(createExperienceDto, id);
+    return this.experienceService.create(createExperienceDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.experienceService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.experienceService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('user/:id')
   findByUserId(@Param('id') id: string) {
     return this.experienceService.findByUserId(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateExperienceDto: UpdateExperienceDto) {
-    return this.experienceService.update(+id, updateExperienceDto);
+  @UseGuards(AuthGuard)
+  @Put(':experienceId')
+  update(
+    @Param('experienceId') experienceId: string,
+    @Body() updateExperienceDto: UpdateExperienceDto) {
+    return this.experienceService.update(experienceId, updateExperienceDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.experienceService.remove(+id);
+    return this.experienceService.remove(id);
   }
 }

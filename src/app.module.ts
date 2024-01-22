@@ -8,6 +8,8 @@ import { UserModule } from './modules/user/user.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ExperienceModule } from './modules/experience/experience.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AddressModule } from './modules/address/address.module';
+import { PersonalDataModule } from './modules/personal-data/personal-data.module';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { JwtModule } from '@nestjs/jwt';
       secret: process.env.JWT_SECRET_KEY,
       signOptions: { expiresIn: '60s' },
     }),
+    PersonalDataModule,
+    AddressModule,
   ],
   controllers: [AppController],
   providers: [AppService],

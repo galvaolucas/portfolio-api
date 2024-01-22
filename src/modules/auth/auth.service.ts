@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -24,7 +24,25 @@ export class AuthService {
     }
     const payload = { sub: user.id, username: user.username, role: user.role, email: user.email }
     return {
-      access_token: this.jwtService.sign(payload, { secret: process.env.JWT_PRIVATE_KEY, algorithm: 'RS256' }),
+      access_token: this.jwtService.sign(payload, { secret: process.env.JWT_PRIVATE_KEY, algorithm: 'RS256', expiresIn: '1d' }),
     };
+  }
+
+  async status(req: Request): Promise<{status: boolean}> {
+    const token = this.extractTokenFromHeader(req);
+    try {
+      const validate = await this.jwtService.verifyAsync(token, { secret: process.env.JWT_PRIVATE_KEY });
+      if (validate) {
+        return { status: true };
+      }
+      return { status: false }
+    } catch (err) {
+      return { status: false }
+    }
+  }
+
+  extractTokenFromHeader(request: Request): string | undefined {
+    const [type, token] = (request.headers as { authorization?: string }).authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }
