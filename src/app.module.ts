@@ -10,6 +10,7 @@ import { ExperienceModule } from './modules/experience/experience.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AddressModule } from './modules/address/address.module';
 import { PersonalDataModule } from './modules/personal-data/personal-data.module';
+import { ProjectsModule } from './modules/projects/projects.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { PersonalDataModule } from './modules/personal-data/personal-data.module
     }),
     PersonalDataModule,
     AddressModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

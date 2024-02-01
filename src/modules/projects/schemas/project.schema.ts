@@ -2,39 +2,30 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { HydratedDocument, ObjectId } from "mongoose";
 import { Address } from "src/modules/address/schema/address.schema";
 import { User } from "src/modules/user/schema/user.schema";
-import { CreatePersonalDataDto } from "../dto/create-personal-data.dto";
+import { CreateProjectDto } from "../dto/create-project.dto";
 
-export type PersonalDataDocument = HydratedDocument<PersonalData>;
+export type ProjectDocument = HydratedDocument<Project>;
 
 @Schema()
-export class PersonalData implements CreatePersonalDataDto {
+export class Project implements CreateProjectDto {
   @Prop({ type: mongoose.Schema.Types.ObjectId })
   _id?: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Address' })
-  address: string | Address;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User', unique: true })
   user: string | User;
 
   @Prop({ required: true })
-  about: string;
+  title: string;
 
   @Prop({ required: true })
-  mainRole: string;
+  description: string;
 
   @Prop({ required: true })
-  secondaryRole: string[];
+  link: string;
 
   @Prop()
-  github?: string;
-
-  @Prop()
-  linkedin?: string;
-
-  @Prop()
-  whatsapp?: string;
+  images?: string[];
 }
 
-export const PersonalDataSchema = SchemaFactory.createForClass(PersonalData);
+export const ProjectSchema = SchemaFactory.createForClass(Project);
 

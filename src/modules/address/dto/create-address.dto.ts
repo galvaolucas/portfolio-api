@@ -1,6 +1,10 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { ObjectId } from "mongoose";
 
 export class CreateAddressDto {
+  @ApiProperty()
+  _id?: ObjectId;
+
   @ApiProperty()
   cep: string;
 

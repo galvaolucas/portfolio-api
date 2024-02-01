@@ -7,6 +7,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserService } from '../user/user.service';
 import { AddressService } from '../address/address.service';
 import { CreateAddressDto } from '../address/dto/create-address.dto';
+import { UpdateAddressDto } from '../address/dto/update-address.dto';
+import { Address } from '../address/schema/address.schema';
 
 @Injectable()
 export class PersonalDataService {
@@ -42,13 +44,34 @@ export class PersonalDataService {
       if (!user) {
         throw new NotFoundException('Usuário não encontrado');
       }
-      return await this.personalDataModel.findById(id).exec();
+      const personalData = await this.personalDataModel.findOne({
+        user: id,
+      }).exec();
+      if (!personalData) {
+        return {};
+      }
+      const address = await this.addressService.findOne(personalData.address as string);
+      personalData.address = address; 
+      return personalData;
     }
   }
 
-  update(id: string, updatePersonalDataDto: UpdatePersonalDataDto) {
-    return `This action updates a #${id} personalData`;
-  }
+  async update(id: string, updatePersonalDataDto: UpdatePersonalDataDto) {
+    const user = await this.userService.findById(updatePersonalDataDto.user as string);
+      if (!user) {
+        throw new NotFoundException('Usuário não encontrado');
+      }
+      const personalData = await this.personalDataModel.findById(id).exec();
+      if (!personalData) {
+        throw new NotFoundException('Dados pessoais não encontrados');
+      }
+      if (updatePersonalDataDto.address) {
+        await this.addressService.updateAddressMapper(updatePersonalDataDto.address as UpdateAddressDto);
+      }
+      return await personalData.updateOne(personalData.id, updatePersonalDataDto).exec();
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
 
   remove(id: number) {
     return `This action removes a #${id} personalData`;

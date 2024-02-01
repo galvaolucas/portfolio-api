@@ -1,9 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import mongoose from 'mongoose';
+import mongoose, { ObjectId } from 'mongoose';
 import { Address } from 'src/modules/address/schema/address.schema';
 import { User } from 'src/modules/user/schema/user.schema';
 
 export class CreatePersonalDataDto {
+  @ApiProperty({ type: mongoose.Schema.Types.ObjectId })
+  _id?: string;
+
   @ApiProperty({ required: true })
   about: string;
 

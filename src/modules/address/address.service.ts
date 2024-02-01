@@ -19,8 +19,8 @@ export class AddressService {
     return `This action returns all address`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} address`;
+  async findOne(id: string) {
+    return await this.addressModel.findById(id);
   }
 
   update(id: number, updateAddressDto: UpdateAddressDto) {
@@ -29,5 +29,31 @@ export class AddressService {
 
   remove(id: number) {
     return `This action removes a #${id} address`;
+  }
+
+  updateAddressMapper = async (data: UpdateAddressDto) => {
+    const address = await this.addressModel.findById(data._id);
+    if (!address) {
+      throw new Error('Endereço não encontrado');
+    }
+    if (data.addOn) {
+      address.addOn = data.addOn;
+    }
+    if (data.city) {
+      address.city = data.city;
+    }
+    if (data.state) {
+      address.state = data.state;
+    }
+    if (data.city) {
+      address.city = data.city;
+    }
+    if (data.number) {
+      address.number = data.number;
+    }
+    if (data.cep) {
+      address.cep = data.cep;
+    }
+    return await this.addressModel.updateOne({ _id: data._id }, data);
   }
 }
